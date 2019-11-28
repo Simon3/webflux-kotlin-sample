@@ -22,18 +22,22 @@ class MyController {
 
     @ExperimentalCoroutinesApi
     @GetMapping("/flow")
-    fun flow() = injectReactorContext(flow {
-        val ctx = securityContext(coroutineContext)
-        emit(mapOf("user" to ((ctx?.authentication?.principal as? User)?.username ?: "<NONE>")))
-    })
-
-    @ExperimentalCoroutinesApi
-    @GetMapping("/cascadeflow")
-    fun cascadeflow() = injectReactorContext(flow {
+    fun flow() = injectReactorContext(
         flow {
             val ctx = securityContext(coroutineContext)
             emit(mapOf("user" to ((ctx?.authentication?.principal as? User)?.username ?: "<NONE>")))
-        }.collect { emit(it)}
-    })
+        }
+    )
+
+    @ExperimentalCoroutinesApi
+    @GetMapping("/cascadeflow")
+    fun cascadeflow() = injectReactorContext(
+        flow {
+            flow {
+                val ctx = securityContext(coroutineContext)
+                emit(mapOf("user" to ((ctx?.authentication?.principal as? User)?.username ?: "<NONE>")))
+            }.collect { emit(it) }
+        }
+    )
 
 }
