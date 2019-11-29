@@ -3,8 +3,7 @@ package org.taktik.spring.security.kotlin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.ReactorContext
 import kotlinx.coroutines.reactor.asCoroutineContext
 import kotlinx.coroutines.reactor.asFlux
@@ -23,4 +22,4 @@ fun injectReactorContext(flow: Flow<Map<String, String>>): Flux<Map<String, Stri
 
 @ExperimentalCoroutinesApi
 suspend fun securityContext(coroutineContext: CoroutineContext) =
-    coroutineContext[ReactorContext]?.context?.get<Mono<SecurityContext>>(SecurityContext::class.java)?.asFlow()?.single()
+    coroutineContext[ReactorContext]?.context?.get<Mono<SecurityContext>>(SecurityContext::class.java)?.awaitSingle()
